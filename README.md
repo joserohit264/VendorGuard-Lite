@@ -4,7 +4,7 @@
 
 It moves GRC from manual spreadsheets to an automated, algorithmic approach, dynamically calculating risk scores and prescribing remediation controls (ISO 27001 / SOC 2) based on vendor attributes.
 
-![Dashboard Preview](https://via.placeholder.com/800x400?text=VendorGuard+Dashboard)
+
 
 ## 🚀 Key Features
 
@@ -54,13 +54,26 @@ The system doesn't just identify risk; it suggests solutions. It automatically m
 
 4.  Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-## 📸 Screenshots
+## 🕹️ Usage Guide
 
-### Risk Assessment Form
-*Input vendor details and see the algorithm work in real-time.*
+### 1. Dashboard
+The main landing page gives you a bird's-eye view of your vendor landscape.
+- **Key Metrics**: Total vendors, critical risks count, and average risk score.
+- **Risk Heatmap**: A list of high-risk vendors requiring immediate attention.
+- **Recent Activity**: A timeline of generic activity.
 
-### Mitigation Plan
-*Specific, actionable controls generated automatically.*
+### 2. Risk Assessment Calculator
+Navigate to the **Assessments** tab to score a new vendor.
+- **Interactive Form**: Input vendor details like "Stores PII", "Critical System", and "SOC2 Compliance".
+- **Real-time Scoring**: The proprietary `RiskEngine` calculates a score (0-100) and assigns a tier (Low, Medium, Critical).
+- **Mitigation Engine**: Automatically suggests ISO 27001 and SOC 2 controls (e.g., "Verify Encryption", "Enforce MFA") based on the specific risks identified.
+- **Save to Registry**: Once assessed, you can save the vendor to your local repository.
+
+### 3. Vendor Registry & Details
+Navigate to the **Vendor Registry** tab to see all vendors.
+- **Persistence**: Vendors are saved to your browser's LocalStorage, so they persist across refreshes.
+- **Detailed Profiles**: Click on any vendor to view their full risk breakdown, service details, and onboarding date.
+- **Remediation Plan**: View the specific list of required security controls for each vendor.
 
 ## 💡 Why This Project?
 This project demonstrates **"Compliance as Code"**. Instead of static policies, we implement risk logic as executable code, ensuring consistency, scalability, and immediate feedback for the security team.
