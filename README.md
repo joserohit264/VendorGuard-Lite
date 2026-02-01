@@ -6,6 +6,35 @@ It moves GRC from manual spreadsheets to an automated, algorithmic approach, dyn
 
 
 
+## 🛠️ Tech Stack
+
+*   **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+*   **Language**: TypeScript
+*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Glassmorphism & Dark Mode)
+*   **Icons**: Lucide React
+*   **State**: React Context API + LocalStorage
+
+## 🏗️ Architecture
+
+The application follows a secure, client-side architecture designed for privacy and zero-infrastructure deployment.
+
+```mermaid
+graph TD
+    User((User)) -->|Interacts| UI[Next.js UI Components]
+
+    subgraph "Browser / Client-Side"
+        UI -->|1. Calculate Risk| Logic[RiskEngine Logic]
+        Logic -->|2. Return Score & Mitigations| UI
+        UI -->|3. Dispatch Action| State[React Context API]
+        State <-->|4. Persist/Hydrate| Store[(LocalStorage)]
+    end
+
+    style UI fill:#f9f,stroke:#333
+    style Logic fill:#bbf,stroke:#333
+    style State fill:#dfd,stroke:#333
+    style Store fill:#ffd,stroke:#333
+```
+
 ## 🚀 Key Features
 
 ### 1. Algorithmic Risk Scoring
@@ -26,13 +55,6 @@ The system doesn't just identify risk; it suggests solutions. It automatically m
 *   **Persistence**: Data is saved locally (`localStorage`), allowing you to track vendors over time.
 *   **Detailed Profiles**: Deep-dive pages for every vendor showing their full risk breakdown.
 
-## 🛠️ Tech Stack
-
-*   **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
-*   **Language**: TypeScript
-*   **Styling**: [Tailwind CSS](https://tailwindcss.com/) (Glassmorphism & Dark Mode)
-*   **Icons**: Lucide React
-*   **State**: React Context API + LocalStorage
 
 ## 🏁 Getting Started
 
@@ -75,5 +97,3 @@ Navigate to the **Vendor Registry** tab to see all vendors.
 - **Detailed Profiles**: Click on any vendor to view their full risk breakdown, service details, and onboarding date.
 - **Remediation Plan**: View the specific list of required security controls for each vendor.
 
-## 💡 Why This Project?
-This project demonstrates **"Compliance as Code"**. Instead of static policies, we implement risk logic as executable code, ensuring consistency, scalability, and immediate feedback for the security team.
