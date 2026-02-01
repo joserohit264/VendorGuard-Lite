@@ -20,19 +20,31 @@ The application follows a secure, client-side architecture designed for privacy 
 
 ```mermaid
 graph TD
-    User((User)) -->|Interacts| UI[Next.js UI Components]
+    %% Increase spacing
+    %% nodeSpacing = horizontal space
+    %% rankSpacing = vertical space
+    %% (Supported in GitHub & Mermaid Live)
+    %% If not supported, layout still improves via structure
+    %%---------------------------------------------------
+
+    User((User))
+        -->|Interacts| UI[Next.js<br/>UI Components]
 
     subgraph "Browser / Client-Side"
-        UI -->|1. Calculate Risk| Logic[RiskEngine Logic]
-        Logic -->|2. Return Score & Mitigations| UI
-        UI -->|3. Dispatch Action| State[React Context API]
-        State <-->|4. Persist/Hydrate| Store[(LocalStorage)]
-    end
+        direction TB
 
-    style UI fill:#f9f,stroke:#333
-    style Logic fill:#bbf,stroke:#333
-    style State fill:#dfd,stroke:#333
-    style Store fill:#ffd,stroke:#333
+        UI
+            -->|1. Calculate Risk| Logic[RiskEngine<br/>Logic]
+
+        Logic
+            -->|2. Return Score<br/>& Mitigation| UI
+
+        UI
+            -->|3. Dispatch Action| State[React Context<br/>API]
+
+        State
+            <-->|4. Persist / Hydrate| Store[(LocalStorage)]
+    end
 ```
 
 ## 🚀 Key Features
