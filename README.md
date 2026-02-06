@@ -72,8 +72,8 @@ The system doesn't just identify risk; it suggests solutions. It automatically m
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/vendor-guard.git
-    cd vendor-guard
+    git clone https://github.com/joserohit264/VendorGuard-Lite
+    cd VendorGuard-Lite
     ```
 
 2.  **Install dependencies**:
