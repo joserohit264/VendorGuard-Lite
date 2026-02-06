@@ -1,11 +1,38 @@
 "use client";
 import { useVendors } from "@/context/VendorContext";
 import { getTierColor } from "@/lib/riskEngine";
-import { Search, Filter, MoreHorizontal } from "lucide-react";
+import { Search, Filter, MoreHorizontal, Download } from "lucide-react";
 import Link from "next/link";
 
 export default function VendorsPage() {
     const { vendors } = useVendors();
+
+    const handleExport = () => {
+        if (vendors.length === 0) return;
+
+        const headers = ["Name", "Service Type", "Risk Score", "Tier", "Data Access", "Critical System", "Stores PII"];
+        const csvContent = [
+            headers.join(","),
+            ...vendors.map(v => [
+                `"${v.name.replace(/"/g, '""')}"`,
+                `"${v.serviceType}"`,
+                v.riskScore,
+                v.riskTier,
+                v.dataAccessLevel,
+                v.isCriticalSystem ? "Yes" : "No",
+                v.storesPII ? "Yes" : "No"
+            ].join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `vendor_export_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     return (
         <div className="space-y-6">
@@ -18,6 +45,10 @@ export default function VendorsPage() {
                     <button className="flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:bg-white/10 transition-colors">
                         <Filter size={18} />
                         <span>Filter</span>
+                    </button>
+                    <button onClick={handleExport} className="flex items-center space-x-2 px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-slate-300 hover:bg-white/10 transition-colors">
+                        <Download size={18} />
+                        <span>Export</span>
                     </button>
                     <button className="flex items-center space-x-2 px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg transition-colors font-medium">
                         <Link href="/assessments">Add Vendor</Link>

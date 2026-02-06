@@ -7,19 +7,12 @@ import { ArrowLeft, Download, Shield, Database, Calendar } from "lucide-react";
 import Link from 'next/link';
 import { Vendor } from "@/types";
 
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 export default function VendorDetailsPage({ params }: { params: Promise<{ id: string }> }) {
     const { vendors } = useVendors();
     const [vendor, setVendor] = useState<Vendor | null>(null);
-
-    // Unwrap params using React.use() as per Next.js 15+ patterns, 
-    // but since we are in a client component we need to be careful.
-    // Actually, for client components in Next 15, params is a Promise.
-    // Let's handle it with useEffect or React.use(). 
-    // For simplicity and stability across versions, we'll use a standard effect pattern 
-    // after unwrapping if necessary, but the proper way in Client Components 
-    // is often just receiving it as prop if the parent was Server Component, 
-    // but here it's a page.
-    // Let's standard unwrap.
 
     const [id, setId] = useState<string>("");
 
@@ -33,6 +26,92 @@ export default function VendorDetailsPage({ params }: { params: Promise<{ id: st
             setVendor(found || null);
         }
     }, [id, vendors]);
+
+    const handleExport = () => {
+        if (!vendor) return;
+
+        const doc = new jsPDF();
+
+        // Brand Color for headers
+        const indigo = "#6366f1";
+        const slate = "#64748b";
+
+        // Title
+        doc.setFontSize(22);
+        doc.setTextColor(indigo);
+        doc.text("Vendor Risk Report", 14, 20);
+
+        // Vendor Name
+        doc.setFontSize(16);
+        doc.setTextColor(0, 0, 0);
+        doc.text(vendor.name, 14, 32);
+
+        // Meta Info Line
+        doc.setFontSize(10);
+        doc.setTextColor(slate);
+        doc.text(`ID: ${vendor.id}  |  Generated: ${new Date().toLocaleDateString()}`, 14, 40);
+
+        // Divider
+        doc.setDrawColor(200, 200, 200);
+        doc.line(14, 45, 196, 45);
+
+        // Section 1: Vendor Details
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Vendor Details", 14, 55);
+
+        doc.setFontSize(11);
+        doc.setTextColor(80, 80, 80);
+        doc.text(`Service Type: ${vendor.serviceType}`, 14, 65);
+        doc.text(`Onboarded On: ${new Date(vendor.createdAt).toLocaleDateString()}`, 14, 72);
+        doc.text(`Description: ${vendor.description || "N/A"}`, 14, 79);
+
+        // Section 2: Risk Profile
+        doc.setFontSize(14);
+        doc.setTextColor(0, 0, 0);
+        doc.text("Risk Profile", 14, 95);
+
+        // Score Box
+        doc.setFillColor(245, 247, 255);
+        doc.roundedRect(14, 100, 50, 25, 3, 3, 'F');
+        doc.setFontSize(10);
+        doc.setTextColor(slate);
+        doc.text("Risk Score", 19, 108);
+        doc.setFontSize(18);
+        doc.setTextColor(indigo);
+        doc.text(`${vendor.riskScore} / 100`, 19, 118);
+
+        // Risk Factors
+        doc.setFontSize(11);
+        doc.setTextColor(80, 80, 80);
+        doc.text(`Risk Tier: ${vendor.riskTier}`, 70, 105);
+        doc.text(`Data Access: ${vendor.dataAccessLevel}`, 70, 112);
+        doc.text(`Critical System: ${vendor.isCriticalSystem ? "Yes" : "No"}`, 70, 119);
+        doc.text(`Stores PII: ${vendor.storesPII ? "Yes" : "No"}`, 130, 105);
+        doc.text(`SOC 2 Compliant: ${vendor.hasSoC2 ? "Yes" : "No"}`, 130, 112);
+
+        // Section 3: Remediation Plan
+        if (vendor.mitigations && vendor.mitigations.length > 0) {
+            doc.setFontSize(14);
+            doc.setTextColor(0, 0, 0);
+            doc.text("Remediation Actions", 14, 140);
+
+            autoTable(doc, {
+                startY: 145,
+                head: [['Standard', 'Control', 'Description']],
+                body: vendor.mitigations.map(m => [m.standard, m.controlCode, m.description]),
+                headStyles: { fillColor: indigo },
+                styles: { fontSize: 10 },
+                columnStyles: {
+                    0: { cellWidth: 30 }, // Standard
+                    1: { cellWidth: 30 }, // Control
+                    2: { cellWidth: 'auto' } // Description
+                }
+            });
+        }
+
+        doc.save(`${vendor.name.replace(/\s+/g, '_').toLowerCase()}_report.pdf`);
+    };
 
     if (!vendor && id) {
         return (
@@ -64,7 +143,7 @@ export default function VendorDetailsPage({ params }: { params: Promise<{ id: st
                     <p className="text-lg text-slate-400">{vendor.description || "No description provided."}</p>
                 </div>
 
-                <button className="flex items-center space-x-2 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-200 px-4 py-2 rounded-lg transition-colors">
+                <button onClick={handleExport} className="flex items-center space-x-2 bg-white/5 border border-white/10 hover:bg-white/10 text-slate-200 px-4 py-2 rounded-lg transition-colors">
                     <Download size={18} />
                     <span>Export Report</span>
                 </button>
